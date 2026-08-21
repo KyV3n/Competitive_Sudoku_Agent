@@ -1,0 +1,7 @@
+### GitIgnore
+
+.idea
+*.iml
+out
+gen
+.venv
