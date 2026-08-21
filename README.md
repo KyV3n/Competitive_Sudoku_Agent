@@ -14,7 +14,7 @@ The contribution of this repository is to build other, more sophisticated player
 ## Scripts
 Contents:
 - The script `simulate_game.py` is used for running a competitive sudoku game.
-- The script `play_match.py` is used for running a match between two players.
+- The script `play_match.py` is used for running a match between two players, consisting of multiple games.
 - The folder `bin` contains a sudoku solver that is used by simulate_game.py.
 - The folder `boards` contains files with starting positions for a game.
 - The folder `competitive_sudoku` is a python module with basic functionality
@@ -37,8 +37,8 @@ This may involve adding other methods to the class or further functions to the m
 
 ## Board format
 The file format for sudoku boards is as follows. 
-A board with regions of size **m x n** (with _m_ the number of rows and _n_ the number of columns) is stored as the fields `rows` and `columns` containing the numbers m and n, followed by a field `board` containing the **(m * n) * m * n** values of the squares of the
-board. Empty squares are printed as a dot `.`. When a square is non-empty, a `+` or `-` is appended to the value to indicate whether it is occupied by the first or second player, respectively.
+A board with regions of size **m x n** (with _m_ the number of rows and _n_ the number of columns) is stored as the fields `rows` and `columns` containing the numbers m and n, followed by a field `board` containing the **(m * n) * m * n** values of the squares of the board.
+Empty squares are printed as a dot `.`. When a square is non-empty, a `+` or `-` is appended to the value to indicate whether it is occupied by the first or second player, respectively.
 
 Optionally, this may be followed by a field `moves` containing the move history of the game represented in this file; a field `taboo-moves` specifying moves that were already declared taboo, and a field 'scores' containing the scores of the two players. 
 Note: No input check is performed to see whether the specified board is the result of a legal game, so take some care when constructing boards like these yourself.
@@ -70,6 +70,8 @@ Running the `simulate_game.py` and `play_game.py` scripts by setting run configu
   (play a game between the random and the greedy player, starting on an empty board with 3x3 regions, and with 1 second per move)
 - `play_match.py --first=random_player --second=greedy_player --board=boards/empty-3x3.txt --time=1.0 --count=5`
   (play a match of 5 games between the random and the greedy player)
+- `play_match.py --first=player_agent_v2 --second=greedy_player --board=boards/empty-3x3.txt --time=1.0 --count=5`
+  (to test the newly implemented player agent)
 
 Alternatively, you can run these in the terminal by adding 'python' before the command.
 
@@ -92,6 +94,11 @@ Basic agents:
 - Finds all legal (square, value) moves
 - Feeds the moves to a Minimax algorithm with alpha-beta pruning
 - Evaluates terminal states based on score and territory (number of playable squares).
+
+`player_agent_v2` uses the same elements as `player_agent_v1`, but additional has:
+- Separates the square from the value. It first chooses squares and only tries to assign a value later.
+- Heuristics based on scoring squares (that are shared with the opponent) to sort the order in which the Minimax algorithm searches potential squares.
+This [search order is very important](docs_literature/Knuth_Moore_Analysis_AB_Pruning.pdf) for algorithms such as Minimax Alpha-Beta to be more effective, as it can have stronger bound earlier and prune more.
 
 ## Dependencies
 Python 3.10 or higher is required to run the code. No additional python packages need to be installed.
